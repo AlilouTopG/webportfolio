@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Deps / env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Build
+dist/
+build/

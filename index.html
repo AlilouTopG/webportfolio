@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial & Systems Engineer — Portfolio | SCADA • Digital Twin • DevOps</title>
+    <meta name="description" content="Industrial & Systems Engineer specializing in SCADA, Digital Twins, Python, Docker & DevOps. Creator of NEXUS v5.0 Enterprise — Hybrid SCADA & Digital Twin Platform.">
+    <meta name="theme-color" content="#0A0A0A">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230A0A0A%22/><text y=%22.9em%22 font-size=%2290%22 fill=%22%2300E5FF%22>◈</text></svg>">
+</head>
+<body>
+    <!-- Noise & Grid Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="logo-mark">◈</span>
+                <span class="logo-text">ISE<span class="accent">.LAB</span></span>
+                <span class="logo-sub">INDUSTRIAL SYSTEMS</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#about" class="nav-link"><span>01</span> About</a>
+                <a href="#projects" class="nav-link"><span>02</span> Projects</a>
+                <a href="#stack" class="nav-link"><span>03</span> Stack</a>
+                <a href="#contact" class="nav-link"><span>04</span> Contact</a>
+                <a href="https://github.com" target="_blank" class="nav-cta">GitHub — View Code ↗</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-left">
+                <div class="eyebrow">
+                    <span class="pulse"></span>
+                    <span class="mono">SYSTEM STATUS: ONLINE — AVAILABLE FOR NEW MISSIONS</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="line muted mono">Industrial & Systems</span>
+                    <span class="line">Engineer</span>
+                    <span class="line accent-gradient">Building the bridge</span>
+                    <span class="line accent-gradient">between Factory</span>
+                    <span class="line">& Intelligence.</span>
+                </h1>
+                <p class="hero-desc">
+                    I architect <strong>hybrid SCADA & Digital Twin</strong> ecosystems that unify OT + IT.
+                    From Modbus TCP & MQTT edge telemetry to Supabase RBAC cloud & Ziegler-Nichols PID auto-tuning — production-grade, secure, observable.
+                </p>
+                <div class="hero-actions">
+                    <a href="#projects" class="btn btn-primary">
+                        <span>Explore Flagship Projects</span>
+                        <span class="btn-arrow">→</span>
+                    </a>
+                    <a href="#about" class="btn btn-ghost">
+                        <span>Download CV</span>
+                        <span class="mono small">PDF • 1.2MB</span>
+                    </a>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-item">
+                        <span class="meta-value mono">5.0</span>
+                        <span class="meta-label mono">NEXUS VERSION</span>
+                    </div>
+                    <div class="meta-divider"></div>
+                    <div class="meta-item">
+                        <span class="meta-value mono">24/7</span>
+                        <span class="meta-label mono">TELEMETRY UPTIME</span>
+                    </div>
+                    <div class="meta-divider"></div>
+                    <div class="meta-item">
+                        <span class="meta-value mono">RBAC</span>
+                        <span class="meta-label mono">SUPABASE SECURE</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="terminal">
+                    <div class="terminal-bar">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <span class="mono terminal-title">nexus_core :: prod — ziegler_nichols_autotune.py</span>
+                        <span class="mono terminal-status">● LIVE</span>
+                    </div>
+                    <div class="terminal-body">
+                        <pre class="code"><code><span class="c"># Ziegler-Nichols Ultimate Gain PID Auto-Tuning</span>
+<span class="k">import</span> <span class="v">nexus</span> <span class="k">as</span> <span class="v">nx</span>
+
+<span class="v">plc</span> = <span class="v">nx</span>.<span class="f">ModbusTCP</span>(<span class="s">"192.168.10.50:502"</span>)
+<span class="v">broker</span> = <span class="v">nx</span>.<span class="f">MQTT</span>(<span class="s">"tls://nexus.mqtt:8883"</span>)
+
+<span class="k">with</span> <span class="v">nx</span>.<span class="f">DigitalTwin</span>(<span class="s">"reactor-04"</span>) <span class="k">as</span> <span class="v">twin</span>:
+    <span class="v">twin</span>.<span class="f">bind</span>(<span class="v">plc</span>, <span class="v">broker</span>, <span class="v">rbac</span>=<span class="s">"supabase"</span>)
+    <span class="v">pid</span> = <span class="v">twin</span>.<span class="f">auto_tune</span>(method=<span class="s">"ziegler_nichols"</span>)
+    <span class="c"># → Ku=4.82  Tu=1.34s  Kp=2.89 Ki=4.31 Kd=0.48</span>
+    <span class="v">twin</span>.<span class="f">deploy</span>(<span class="v">pid</span>, strategy=<span class="s">"canary"</span>)
+    <span class="f">print</span>(<span class="s">f"✓ Deployed PID {pid.id} | overshoot &lt; 4.2%"</span>)</code></pre>
+                        <div class="terminal-stats">
+                            <div class="stat"><span class="mono label">LATENCY</span><span class="mono val cyan">12ms</span><span class="bar"><i style="width: 88%"></i></span></div>
+                            <div class="stat"><span class="mono label">THROUGHPUT</span><span class="mono val cyan">2.4k msg/s</span><span class="bar"><i style="width: 72%"></i></span></div>
+                            <div class="stat"><span class="mono label">INTEGRITY</span><span class="mono val cyan">99.98%</span><span class="bar"><i style="width: 98%"></i></span></div>
+                        </div>
+                    </div>
+                    <div class="terminal-glow"></div>
+                </div>
+                <!-- Floating badges -->
+                <div class="float-badge badge-1">
+                    <span class="mono">MODBUS TCP</span><span class="dot"></span><span>Connected</span>
+                </div>
+                <div class="float-badge badge-2">
+                    <span class="mono">MQTT TLS</span><span class="dot"></span><span>Encrypted</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-hint mono">
+            <span>SCROLL TO EXPLORE</span>
+            <span class="line-v"></span>
+        </div>
+    </header>
+
+    <!-- About / Skills -->
+    <section id="about" class="section about">
+        <div class="container">
+            <div class="section-head">
+                <span class="mono section-kicker"><span class="accent">01 —</span> About Me</span>
+                <h2 class="section-title">Systems thinker.<br>Industrial builder.<br><span class="accent">DevOps native.</span></h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-card main-card">
+                    <div class="card-top mono">
+                        <span>PROFILE // INDUSTRIAL & SYSTEMS ENGINEER</span>
+                        <span class="chip">OPEN TO WORK</span>
+                    </div>
+                    <p class="lead">
+                        Industrial & Systems Engineer obsessed with <em>reliability, observability, and elegant automation</em>. I design and ship production SCADA platforms, digital twins, and infrastructure tooling that survive the plant floor and scale in the cloud.
+                    </p>
+                    <p>
+                        My workflow lives at the intersection of <strong>Python, Docker & DevOps</strong> — containerized microservices, CI/CD, Infrastructure as Code — and deep OT protocols. I don’t just prototype dashboards; I ship hardened systems with RBAC, audit trails, and PID loops that actually hold setpoints.
+                    </p>
+                    <div class="pill-row">
+                        <span class="pill">Systems Optimization</span>
+                        <span class="pill">Operations Research</span>
+                        <span class="pill">Control Theory</span>
+                        <span class="pill">Industrial IoT</span>
+                        <span class="pill">Lean Manufacturing</span>
+                    </div>
+                    <div class="about-stats">
+                        <div class="a-stat"><span class="num">2</span><span class="mono label">Flagship<br>Platforms</span></div>
+                        <div class="a-stat"><span class="num">500+</span><span class="mono label">Industrial<br>Tags Monitored</span></div>
+                        <div class="a-stat"><span class="num">99.9%</span><span class="mono label">Target<br>Uptime SLA</span></div>
+                    </div>
+                </div>
+                <div class="about-card skills-card">
+                    <h3 class="mono card-title">Core Stack</h3>
+                    <div class="skill-groups">
+                        <div class="skill-group">
+                            <h4 class="mono"><span class="accent">›</span> Languages & Frameworks</h4>
+                            <div class="skill-bars">
+                                <div class="skill"><span>Python</span><span class="mono pct">95%</span><div class="track"><i style="width:95%"></i></div></div>
+                                <div class="skill"><span>FastAPI / Flask</span><span class="mono pct">88%</span><div class="track"><i style="width:88%"></i></div></div>
+                                <div class="skill"><span>JavaScript / TypeScript</span><span class="mono pct">82%</span><div class="track"><i style="width:82%"></i></div></div>
+                                <div class="skill"><span>SQL / PostgreSQL</span><span class="mono pct">90%</span><div class="track"><i style="width:90%"></i></div></div>
+                            </div>
+                        </div>
+                        <div class="skill-group">
+                            <h4 class="mono"><span class="accent">›</span> DevOps & Infra</h4>
+                            <div class="tags">
+                                <span class="tag">Docker</span><span class="tag">Docker Compose</span><span class="tag">Kubernetes</span><span class="tag">GitHub Actions</span><span class="tag">Nginx</span><span class="tag">Linux</span><span class="tag">CI/CD</span><span class="tag">Terraform</span>
+                            </div>
+                        </div>
+                        <div class="skill-group">
+                            <h4 class="mono"><span class="accent">›</span> SCADA / OT / IoT</h4>
+                            <div class="tags">
+                                <span class="tag cyan">SCADA</span><span class="tag cyan">Modbus TCP</span><span class="tag cyan">MQTT</span><span class="tag cyan">OPC UA</span><span class="tag cyan">Digital Twin</span><span class="tag cyan">PID Control</span><span class="tag cyan">Ziegler-Nichols</span><span class="tag cyan">Supabase RBAC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="section projects">
+        <div class="container">
+            <div class="section-head">
+                <span class="mono section-kicker"><span class="accent">02 —</span> Flagship Projects</span>
+                <h2 class="section-title">Production systems,<br>not demos.</h2>
+                <p class="section-desc">Two enterprise-grade platforms built for real factories and real data centers — containerized, secured, observable, and documented like a product.</p>
+            </div>
+
+            <div class="projects-grid">
+                <!-- NEXUS v5.0 -->
+                <article class="project-card featured">
+                    <div class="project-top">
+                        <div class="project-badge mono">
+                            <span class="pulse small"></span> FLAGSHIP • v5.0 • ENTERPRISE
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/your-username/nexus-v5-enterprise" target="_blank" class="icon-link" aria-label="GitHub Repository">↗ Repository</a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-header">
+                            <h3 class="project-title">NEXUS v5.0 Enterprise</h3>
+                            <p class="mono project-subtitle">Hybrid Industrial SCADA & Digital Twin Platform</p>
+                        </div>
+                        <p class="project-desc">
+                            A unified OT/IT platform that bridges physical assets to a real-time digital twin. NEXUS ingests Modbus TCP telemetry, streams via MQTT, enforces Supabase Row-Level Security (RBAC), and closes the loop with auto-tuned PID control.
+                        </p>
+
+                        <div class="arch-block">
+                            <h4 class="mono">Architecture Overview</h4>
+                            <div class="arch-diagram mono">
+                                <span class="arch-node">Sensors / PLCs<br><small>Modbus TCP</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Edge Gateway<br><small>MQTT • TLS</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node accent-border">NEXUS Core<br><small>FastAPI • Twin Engine</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Supabase<br><small>Postgres • RBAC • Realtime</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Dashboard<br><small>PID • Analytics</small></span>
+                            </div>
+                        </div>
+
+                        <div class="highlights">
+                            <h4 class="mono">Technical Highlights</h4>
+                            <ul class="highlight-grid">
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Modbus TCP + MQTT Dual Ingest</strong>
+                                        <span>Deterministic polling (≥100ms) + pub/sub event streaming with TLS, QoS 1/2, and offline buffering</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Supabase RBAC & RLS</strong>
+                                        <span>Role-based access (Operator / Engineer / Admin) with Row-Level Security, audit logs, and JWT auth</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Ziegler-Nichols PID Auto-Tuning</strong>
+                                        <span>Ultimate-gain oscillation detection → Kp/Ki/Kd auto-calc, live twin simulation, <4% overshoot</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Digital Twin Engine</strong>
+                                        <span>Real-time state replication, historical replay, what-if simulation, and canary deployments</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Dockerized & Observable</strong>
+                                        <span>Compose stack (API, worker, broker, DB) + Prometheus / Grafana + structured logging</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Production Hardened</strong>
+                                        <span>CI/CD, secret management, healthchecks, graceful shutdown — no toy code</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="project-footer">
+                            <div class="tech mono">
+                                <span>Python</span><span>FastAPI</span><span>Docker</span><span>MQTT</span><span>Modbus</span><span>Supabase</span><span>Postgres</span><span>PID</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/your-username/nexus-v5-enterprise" target="_blank" class="btn btn-primary small">View Repository →</a>
+                                <a href="#" class="btn btn-ghost small">Live Demo — Coming Soon</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <!-- Server / Infra Management -->
+                <article class="project-card">
+                    <div class="project-top">
+                        <div class="project-badge mono">
+                            INFRASTRUCTURE • v2.4 • STABLE
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/your-username/server-infra-manager" target="_blank" class="icon-link" aria-label="GitHub Repository">↗ Repository</a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-header">
+                            <h3 class="project-title">Server & Infrastructure Manager</h3>
+                            <p class="mono project-subtitle">Robust System Administration & Monitoring Toolkit</p>
+                        </div>
+                        <p class="project-desc">
+                            A lean, opinionated platform for DevOps and sysadmins to provision, monitor, and heal Linux fleets. Built for homelabs that grew into production — with agentless SSH orchestration, real-time health metrics, and actionable alerts.
+                        </p>
+
+                        <div class="arch-block">
+                            <h4 class="mono">Architecture Overview</h4>
+                            <div class="arch-diagram mono">
+                                <span class="arch-node">Fleet<br><small>Linux • SSH</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Collector<br><small>Python • cron</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node accent-border">Core API<br><small>FastAPI • Postgres</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Alert Engine<br><small>Webhook • Email</small></span>
+                            </div>
+                        </div>
+
+                        <div class="highlights">
+                            <h4 class="mono">Key Capabilities</h4>
+                            <ul class="highlight-grid two-col">
+                                <li>
+                                    <span class="h-icon">▸</span>
+                                    <div>
+                                        <strong>Real-Time Monitoring</strong>
+                                        <span>CPU, RAM, disk, network, systemd services + Docker containers — 10s granularity</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">▸</span>
+                                    <div>
+                                        <strong>Agentless Orchestration</strong>
+                                        <span>SSH + Python — no agent install. Bulk exec, playbooks, and rollback</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">▸</span>
+                                    <div>
+                                        <strong>Smart Alerts & Auto-Heal</strong>
+                                        <span>Thresholds, anomaly detection, auto-restart policies, and incident timeline</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">▸</span>
+                                    <div>
+                                        <strong>Security First</strong>
+                                        <span>Vaulted secrets, key rotation, RBAC, and audit trail for every command</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="project-footer">
+                            <div class="tech mono">
+                                <span>Python</span><span>Bash</span><span>Docker</span><span>Linux</span><span>PostgreSQL</span><span>Nginx</span><span>Grafana</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/your-username/server-infra-manager" target="_blank" class="btn btn-primary small">View Repository →</a>
+                                <a href="#" class="btn btn-ghost small">Documentation</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stack / Philosophy -->
+    <section id="stack" class="section stack">
+        <div class="container">
+            <div class="stack-grid">
+                <div class="stack-card">
+                    <span class="mono kicker">03 — Engineering Philosophy</span>
+                    <h3>Reliability is a feature.<br>Observability is non-negotiable.</h3>
+                    <p>I ship systems that operators trust at 3 AM. That means idempotent deploys, graceful degradation, and dashboards that answer questions before you ask them.</p>
+                    <ul class="mono check-list">
+                        <li>✓ Infrastructure as Code — reproducible from zero</li>
+                        <li>✓ 12-Factor microservices — stateless, logged, configured</li>
+                        <li>✓ Test the unhappy path — chaos, not just happy flows</li>
+                    </ul>
+                </div>
+                <div class="stack-card highlight-card">
+                    <h4 class="mono">Deployment-Ready</h4>
+                    <p class="mono small">This portfolio is CI/CD ready for:</p>
+                    <div class="deploy-badges">
+                        <span class="deploy-badge"><span class="dot green"></span> GitHub Pages — auto via Actions</span>
+                        <span class="deploy-badge"><span class="dot cyan"></span> Streamlit Cloud — streamlit_app.py</span>
+                        <span class="deploy-badge"><span class="dot"></span> Any static host — /dist</span>
+                    </div>
+                    <code class="mono code-inline">gh-pages • streamlit • docker • nginx</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="contact-card">
+                <div class="contact-left">
+                    <span class="mono section-kicker"><span class="accent">04 —</span> Contact</span>
+                    <h2>Let’s build<br>something resilient.</h2>
+                    <p>Open for Industrial IoT, SCADA modernization, and DevOps collaborations. Response time &lt; 24h.</p>
+                    <div class="contact-actions">
+                        <a href="mailto:hello@iselab.dev" class="btn btn-primary">hello@iselab.dev →</a>
+                        <a href="https://linkedin.com" target="_blank" class="btn btn-ghost">LinkedIn</a>
+                        <a href="https://github.com" target="_blank" class="btn btn-ghost">GitHub</a>
+                    </div>
+                </div>
+                <div class="contact-right">
+                    <form class="contact-form" onsubmit="return handleContact(event)">
+                        <div class="form-row">
+                            <label class="mono">Name <input type="text" placeholder="Ada Lovelace" required></label>
+                            <label class="mono">Email <input type="email" placeholder="ada@analytical.engine" required></label>
+                        </div>
+                        <label class="mono">Message <textarea rows="4" placeholder="Tell me about your plant, your stack, your problem..." required></textarea></label>
+                        <button type="submit" class="btn btn-primary full">Send Transmission — Encrypted ✓</button>
+                        <span class="mono form-note">Demo form — wire to Formspree / Supabase / API</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-inner mono">
+            <span>© 2026 Industrial & Systems Engineer — Built with precision in #0A0A0A / #00E5FF</span>
+            <span>JetBrains Mono • Inter • OLED Cyberpunk • RBAC Secured</span>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
