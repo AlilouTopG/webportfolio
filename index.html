@@ -13,7 +13,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230A0A0A%22/><text y=%22.9em%22 font-size=%2290%22 fill=%22%2300E5FF%22>◈</text></svg>">
 </head>
 <body>
-    <!-- Noise & Grid Background -->
+    <!-- Background Decor -->
     <div class="bg-grid"></div>
     <div class="bg-glow glow-1"></div>
     <div class="bg-glow glow-2"></div>
@@ -39,7 +39,7 @@
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <header class="hero">
         <div class="hero-inner">
             <div class="hero-left">
@@ -106,14 +106,13 @@
     <span class="v">twin</span>.<span class="f">deploy</span>(<span class="v">pid</span>, strategy=<span class="s">"canary"</span>)
     <span class="f">print</span>(<span class="s">f"✓ Deployed PID {pid.id} | overshoot &lt; 4.2%"</span>)</code></pre>
                         <div class="terminal-stats">
-                            <div class="stat"><span class="mono label">LATENCY</span><span class="mono val cyan">12ms</span><span class="bar"><i style="width: 88%"></i></span></div>
-                            <div class="stat"><span class="mono label">THROUGHPUT</span><span class="mono val cyan">2.4k msg/s</span><span class="bar"><i style="width: 72%"></i></span></div>
-                            <div class="stat"><span class="mono label">INTEGRITY</span><span class="mono val cyan">99.98%</span><span class="bar"><i style="width: 98%"></i></span></div>
+                            <div class="stat"><span class="mono label">LATENCY</span><span class="mono val cyan">12ms</span><span class="bar"><i class="fill-88"></i></span></div>
+                            <div class="stat"><span class="mono label">THROUGHPUT</span><span class="mono val cyan">2.4k msg/s</span><span class="bar"><i class="fill-72"></i></span></div>
+                            <div class="stat"><span class="mono label">INTEGRITY</span><span class="mono val cyan">99.98%</span><span class="bar"><i class="fill-98"></i></span></div>
                         </div>
                     </div>
                     <div class="terminal-glow"></div>
                 </div>
-                <!-- Floating badges -->
                 <div class="float-badge badge-1">
                     <span class="mono">MODBUS TCP</span><span class="dot"></span><span>Connected</span>
                 </div>
@@ -128,7 +127,7 @@
         </div>
     </header>
 
-    <!-- About / Skills -->
+    <!-- About Section -->
     <section id="about" class="section about">
         <div class="container">
             <div class="section-head">
@@ -166,10 +165,10 @@
                         <div class="skill-group">
                             <h4 class="mono"><span class="accent">›</span> Languages & Frameworks</h4>
                             <div class="skill-bars">
-                                <div class="skill"><span>Python</span><span class="mono pct">95%</span><div class="track"><i style="width:95%"></i></div></div>
-                                <div class="skill"><span>FastAPI / Flask</span><span class="mono pct">88%</span><div class="track"><i style="width:88%"></i></div></div>
-                                <div class="skill"><span>JavaScript / TypeScript</span><span class="mono pct">82%</span><div class="track"><i style="width:82%"></i></div></div>
-                                <div class="skill"><span>SQL / PostgreSQL</span><span class="mono pct">90%</span><div class="track"><i style="width:90%"></i></div></div>
+                                <div class="skill"><span>Python</span><span class="mono pct">95%</span><div class="track"><i class="fill-95"></i></div></div>
+                                <div class="skill"><span>FastAPI / Flask</span><span class="mono pct">88%</span><div class="track"><i class="fill-88"></i></div></div>
+                                <div class="skill"><span>JavaScript / TypeScript</span><span class="mono pct">82%</span><div class="track"><i class="fill-82"></i></div></div>
+                                <div class="skill"><span>SQL / PostgreSQL</span><span class="mono pct">90%</span><div class="track"><i class="fill-90"></i></div></div>
                             </div>
                         </div>
                         <div class="skill-group">
@@ -190,7 +189,7 @@
         </div>
     </section>
 
-    <!-- Projects -->
+    <!-- Projects Section -->
     <section id="projects" class="section projects">
         <div class="container">
             <div class="section-head">
@@ -200,7 +199,7 @@
             </div>
 
             <div class="projects-grid">
-                <!-- NEXUS v5.0 -->
+                <!-- NEXUS v5.0 Enterprise -->
                 <article class="project-card featured">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -295,7 +294,7 @@
                     <div class="card-glow"></div>
                 </article>
 
-                <!-- Server / Infra Management -->
+                <!-- Server Status Dashboard -->
                 <article class="project-card">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -376,7 +375,7 @@
         </div>
     </section>
 
-    <!-- Stack / Philosophy -->
+    <!-- Stack Section -->
     <section id="stack" class="section stack">
         <div class="container">
             <div class="stack-grid">
@@ -404,7 +403,7 @@
         </div>
     </section>
 
-    <!-- Contact -->
+    <!-- Contact Section -->
     <section id="contact" class="section contact">
         <div class="container">
             <div class="contact-card">
@@ -433,6 +432,7 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="container footer-inner mono">
             <span>© 2026 Industrial & Systems Engineer — Built with precision in #0A0A0A / #00E5FF</span>
