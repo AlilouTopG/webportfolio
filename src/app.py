@@ -335,11 +335,15 @@ if "Setpoint" not in st.session_state:
     st.session_state["Setpoint"] = 80.0
 
 # ── Callbacks — executed BEFORE slider instantiation ──
-def apply_gains_controller():
-    """Primary Apply — Ziegler-Nichols aggressive preset."""
+def apply_gains_callback():
+    """Primary Apply — Ziegler-Nichols aggressive preset. Called via on_click BEFORE widget instantiation."""
     st.session_state["Kp"] = 6.0
     st.session_state["Ki"] = 1.5
     st.session_state["Kd"] = 0.8
+
+# Alias for legacy reference (keeps previous name functional)
+def apply_gains_controller():
+    return apply_gains_callback()
 
 def set_preset(kp, ki, kd):
     st.session_state["Kp"] = kp
@@ -361,7 +365,7 @@ with st.sidebar.container(border=True):
     c3.button("AGGR", help="Aggressive: fast response", on_click=set_preset, args=(6.0, 1.5, 0.8), use_container_width=True)
     c4.button("ZN", help="Ziegler-Nichols tuned", on_click=set_preset, args=(8.5, 2.2, 1.0), use_container_width=True)
 
-    st.button("Apply Gains Controller", on_click=apply_gains_controller, use_container_width=True, type="primary")
+    st.button("Apply Gains Controller", on_click=apply_gains_callback, use_container_width=True, type="primary")
 
 # ── Kp — SCADA Card ──
 with st.sidebar.container(border=True):
