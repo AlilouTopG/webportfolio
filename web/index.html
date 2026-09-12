@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS v5.0 | Industrial PID Digital Twin — Static SCADA</title>
+<meta name="description" content="Standalone SCADA Digital Twin — Industrial PID (P/I/D, Anti-windup, Derivative Filter) + Plant Models (Thermal, DC Motor, Tank) — Cyberpunk OLED #0A0A0C / #00E676">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+  :root{
+    --bg: #0A0A0C;
+    --bg-card: #12131C;
+    --bg-elev: #1A1C27;
+    --border: rgba(0,230,118,0.14);
+    --border-strong: rgba(0,230,118,0.32);
+    --neon: #00E676;
+    --neon-dim: rgba(0,230,118,0.14);
+    --neon-glow: rgba(0,230,118,0.35);
+    --text: #E6E8EB;
+    --muted: #8A9099;
+    --dim: #6B7280;
+    --radius: 14px;
+    --radius-lg: 18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .mono{font-family:'JetBrains Mono',monospace}
+  a{color:inherit;text-decoration:none}
+
+  /* OLED Grid + Glow */
+  .bg-grid{position:fixed;inset:0;z-index:-3;background-image:linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0%, black 55%, transparent 75%);pointer-events:none}
+  .bg-glow{position:fixed;z-index:-2;pointer-events:none;filter:blur(90px);opacity:0.5}
+  .glow-1{width:700px;height:700px;right:-140px;top:-160px;background:radial-gradient(circle, rgba(0,230,118,0.16), transparent 70%)}
+  .glow-2{width:900px;height:600px;left:-200px;top:420px;background:radial-gradient(circle, rgba(0,230,118,0.07), transparent 70%)}
+
+  /* Layout */
+  .app{max-width:1360px;margin:0 auto;padding:24px;display:grid;grid-template-columns:360px 1fr;gap:22px}
+  .header{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(18,19,28,0.85);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(12px)}
+  .header-left{display:flex;align-items:center;gap:12px}
+  .logo{width:36px;height:36px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-strong);display:grid;place-items:center;color:var(--neon);font-weight:800;box-shadow:0 0 18px rgba(0,230,118,0.18)}
+  .header h1{font-size:15px;letter-spacing:-0.02em;line-height:1}
+  .header h1 span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--neon);display:block;margin-top:4px}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--neon);border:1px solid var(--border-strong);background:var(--neon-dim);padding:6px 10px;border-radius:999px}
+
+  /* Sidebar */
+  .sidebar{display:flex;flex-direction:column;gap:16px}
+  .card{
+    background: rgba(18,19,28,0.92);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 32px rgba(0,0,0,0.45);
+  }
+  .card:hover{border-color:rgba(0,230,118,0.22);box-shadow:0 12px 40px rgba(0,0,0,0.55), 0 0 18px rgba(0,230,118,0.06)}
+  .card-head{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--neon);display:flex;align-items:center;gap:6px;margin-bottom:10px;font-weight:700}
+  .card-head::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon-glow);display:inline-block}
+  .hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.06em;margin-bottom:10px}
+  label.mono{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--muted);display:block;margin-bottom:6px}
+
+  /* Custom Select — hide white wrapper */
+  select{
+    width:100%;background:var(--bg-card) !important;color:var(--neon) !important;border:1px solid var(--border-strong) !important;
+    border-radius:10px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;appearance:none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--neon) 50%), linear-gradient(135deg, var(--neon) 50%, transparent 50%); background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px); background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+  }
+  select:focus{border-color:var(--neon) !important;box-shadow:0 0 0 3px rgba(0,230,118,0.14) !important}
+
+  /* Custom Sliders — no white wrappers */
+  input[type="range"]{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:999px;outline:none;margin:10px 0 6px 0;
+  }
+  input[type="range"]::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:transparent}
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--neon);border:2px solid var(--bg-card);box-shadow:0 0 12px rgba(0,230,118,0.85), 0 2px 8px rgba(0,0,0,0.6);margin-top:-7px;cursor:pointer;transition:transform 0.12s ease;
+  }
+  input[type="range"]:hover::-webkit-slider-thumb{transform:scale(1.08)}
+  input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--neon);border:2px solid var(--bg-card);box-shadow:0 0 12px rgba(0,230,118,0.85);cursor:pointer}
+  input[type="range"]::-moz-range-track{height:4px;border-radius:999px;background:rgba(255,255,255,0.08)}
+  .range-row{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+  .range-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--neon);background:var(--neon-dim);border:1px solid var(--border-strong);padding:2px 7px;border-radius:999px;font-weight:700}
+  .range-minmax{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--dim)}
+
+  /* Number Input — hide white, OLED */
+  input[type="number"]{
+    width:100%;background:var(--bg-card) !important;border:1px solid var(--border-strong) !important;border-radius:10px !important;color:var(--neon) !important;
+    font-family:'JetBrains Mono',monospace !important;font-size:13px !important;padding:10px 12px !important;outline:none !important;
+  }
+  input[type="number"]:focus{border-color:var(--neon) !important;box-shadow:0 0 0 3px rgba(0,230,118,0.12) !important}
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button{opacity:1}
+
+  /* Segmented Controls — pill buttons */
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+  .seg button, .preset-btn{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;border-radius:999px;padding:7px 8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer;transition:all 0.15s ease;
+  }
+  .seg button:hover, .preset-btn:hover{border-color:rgba(0,230,118,0.32);color:var(--text);background:rgba(0,230,118,0.08);box-shadow:0 0 14px rgba(0,230,118,0.10);transform:translateY(-1px)}
+  .preset-btn.primary{background:var(--neon) !important;color:#00110A !important;border-color:transparent !important;box-shadow:0 6px 20px rgba(0,230,118,0.32) !important;font-weight:800}
+  .preset-btn.primary:hover{background:#00D87A !important;box-shadow:0 8px 24px rgba(0,230,118,0.42) !important}
+
+  /* Metrics — styled boxes (no white) */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .metric{
+    background:var(--bg-card);border:1px solid var(--border-strong);border-radius:14px;padding:14px 16px;
+  }
+  .metric-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;color:var(--neon);margin-bottom:6px}
+  .metric-value{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--text);line-height:1}
+  .metric-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+  /* Main */
+  .main{display:flex;flex-direction:column;gap:16px}
+  .chart-wrap{background:rgba(18,19,28,0.92);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;backdrop-filter:blur(10px)}
+  .chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .chart-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--neon)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;font-family:'Inter',sans-serif;font-weight:800;font-size:13px;cursor:pointer;border:none;transition:all 0.15s ease;
+  }
+  .btn-primary{background:var(--neon);color:#00110A;box-shadow:0 8px 24px rgba(0,230,118,0.32), inset 0 1px 0 rgba(255,255,255,0.6);width:100%}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,230,118,0.42)}
+  .btn-ghost{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:var(--text)}
+  .btn-ghost:hover{background:rgba(255,255,255,0.10)}
+  .actions{display:flex;gap:10px}
+  .actions .btn{flex:1}
+
+  /* Responsive */
+  @media (max-width: 980px){
+    .app{grid-template-columns:1fr}
+    .metrics{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 560px){
+    .app{padding:14px;gap:14px}
+    .metrics{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow glow-1"></div>
+<div class="bg-glow glow-2"></div>
+
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">⚡</div>
+      <h1>NEXUS v5.0 — Embedded PID Digital Twin <span>STATIC SCADA SPA • #0A0A0C / #00E676 • NO PYTHON</span></h1>
+    </div>
+    <div class="badge">◈ STANDALONE • PLOTLY.JS</div>
+  </header>
+
+  <!-- Sidebar Controls -->
+  <aside class="sidebar">
+    <div class="card">
+      <div class="card-head">⬢ INDUSTRIAL TARGET</div>
+      <label class="mono" for="plant">Plant Dynamics</label>
+      <select id="plant">
+        <option value="Thermal System">Thermal System — First-Order</option>
+        <option value="DC Motor Speed">DC Motor Speed — Second-Order</option>
+        <option value="Liquid Tank Level">Liquid Tank Level — Hydraulic</option>
+      </select>
+      <div class="hint">First-order thermal • Second-order motor • Non-linear tank</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">⚡ RAPID GAIN PRESETS</div>
+      <div class="hint">One-tap SCADA tuning — Z-N & factory presets</div>
+      <div class="seg">
+        <button data-preset="conservative" title="Conservative">CONS</button>
+        <button data-preset="balanced" title="Balanced">BAL</button>
+        <button data-preset="aggressive" title="Aggressive">AGGR</button>
+        <button data-preset="zn" title="Ziegler-Nichols">ZN</button>
+      </div>
+      <button class="preset-btn primary" id="applyPresetBtn" style="width:100%;margin-top:4px">Apply Preset Gains</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">▸ KP — PROPORTIONAL GAIN</div>
+      <input type="range" id="kp" min="0" max="20" step="0.1" value="2.5">
+      <div class="range-row"><span class="range-minmax">0 • MIN</span><span class="range-val mono" id="kpVal">2.50 gain</span><span class="range-minmax">MAX • 20</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">▸ KI — INTEGRAL GAIN</div>
+      <input type="range" id="ki" min="0" max="10" step="0.05" value="0.5">
+      <div class="range-row"><span class="range-minmax">0 • MIN</span><span class="range-val mono" id="kiVal">0.50 gain</span><span class="range-minmax">MAX • 10</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">▸ KD — DERIVATIVE GAIN</div>
+      <input type="range" id="kd" min="0" max="5" step="0.01" value="0.1">
+      <div class="range-row"><span class="range-minmax">0 • MIN</span><span class="range-val mono" id="kdVal">0.10 gain</span><span class="range-minmax">MAX • 5</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🎯 SETPOINT — TARGET VALUE</div>
+      <div class="seg">
+        <button data-sp="40">40</button>
+        <button data-sp="60">60</button>
+        <button data-sp="80">80</button>
+        <button data-sp="100">100</button>
+      </div>
+      <label class="mono" for="setpoint">Target Setpoint</label>
+      <input type="number" id="setpoint" value="80" step="1">
+      <div class="hint" style="margin-top:8px">Thermal default 80 • Motor/Tank default 50</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🌡️ ENVIRONMENT & TIME</div>
+      <label class="mono" for="disturbance">External Disturbance: <span class="mono" id="distVal" style="color:var(--neon)">0.0</span></label>
+      <input type="range" id="disturbance" min="-10" max="10" step="0.5" value="0">
+      <div class="range-row"><span class="range-minmax">-10</span><span class="range-minmax">+10</span></div>
+      <label class="mono" for="simTime" style="margin-top:12px">Simulation Duration (s): <span class="mono" id="simTimeVal" style="color:var(--neon)">30</span></label>
+      <input type="range" id="simTime" min="10" max="100" step="1" value="30">
+      <div class="range-row"><span class="range-minmax">10s</span><span class="range-minmax">100s</span></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="card" style="padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <h2 style="font-size:18px;letter-spacing:-0.02em">⚡ NEXUS v5.0 — Embedded PID Digital Twin</h2>
+          <p class="mono" style="font-size:11px;color:var(--muted);margin-top:4px">Real-time Industrial Control Simulation • <span id="plantCaption" style="color:var(--neon)">Thermal System</span> • Pure JS Engine</p>
+        </div>
+        <div class="badge" id="statusBadge">● IDLE</div>
+      </div>
+      <div class="actions" style="margin-top:16px">
+        <button class="btn btn-primary" id="runBtn">▶ Execute Real-Time Simulation</button>
+        <button class="btn btn-ghost" id="exportBtn" disabled>📥 Export Telemetry (CSV)</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Final Process Value</div><div class="metric-value" id="mPV">—</div><div class="metric-sub mono" id="mPVSub">awaiting run</div></div>
+      <div class="metric"><div class="metric-label">IAE — Absolute Error</div><div class="metric-value" id="mIAE">—</div><div class="metric-sub mono">∫|e| dt</div></div>
+      <div class="metric"><div class="metric-label">ISE — Square Error</div><div class="metric-value" id="mISE">—</div><div class="metric-sub mono">∫e² dt</div></div>
+      <div class="metric"><div class="metric-label">Stability Status</div><div class="metric-value" id="mStable">—</div><div class="metric-sub mono" id="mStableSub">—</div></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-head"><span class="chart-title">Process Response (PV vs SP)</span><span class="mono" style="font-size:10px;color:var(--dim)" id="chartMeta">—</span></div>
+      <div id="chartPV" style="height:340px"></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-head"><span class="chart-title">Controller Output (PWM / % Power)</span><span class="mono" style="font-size:10px;color:var(--dim)">U(t) • Anti-windup clamped</span></div>
+      <div id="chartU" style="height:260px"></div>
+    </div>
+
+    <div class="card mono" style="font-size:11px;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--neon)">Static SPA Notes:</strong> 100% client-side. No Python/Streamlit. Industrial-grade PID (P + I + D on measurement, derivative filter α=0.1, anti-windup), three plant models. Theme #0A0A0C / #00E676 — all sliders/inputs remapped to OLED (no white wrappers). Deployable to GitHub Pages (this file) — Streamlit Cloud still serves <code style="background:rgba(0,230,118,0.10);padding:1px 5px;border-radius:6px;color:var(--neon)">app.py</code>.
+    </div>
+  </main>
+</div>
+
+<script>
+// ==========================================
+// INDUSTRIAL PID ENGINE — JS PORT (P/I/D, Anti-windup, Derivative Filter)
+// ==========================================
+class IndustrialPID {
+  constructor(Kp, Ki, Kd, outputLimits=[-100,100], antiWindup=true, alpha=0.1){
+    this.Kp=Kp; this.Ki=Ki; this.Kd=Kd;
+    this.minOut=outputLimits[0]; this.maxOut=outputLimits[1];
+    this.antiWindup=antiWindup; this.alpha=alpha;
+    this.reset();
+  }
+  reset(){
+    this.integral=0; this.prevDerivative=0; this.prevMeasurement=0;
+  }
+  compute(setpoint, measurement, dt){
+    if(dt<=0) return 0;
+    const error = setpoint - measurement;
+    const P = this.Kp * error;
+    this.integral += error * dt;
+    let I = this.Ki * this.integral;
+    const dMeas = (measurement - this.prevMeasurement) / dt;
+    const derivative = this.alpha * dMeas + (1-this.alpha) * this.prevDerivative;
+    const D = -this.Kd * derivative;
+    let outUnclamped = P + I + D;
+    let out = Math.max(this.minOut, Math.min(this.maxOut, outUnclamped));
+    if(this.antiWindup && out !== outUnclamped){
+      if(Math.sign(error) === Math.sign(outUnclamped)){
+        this.integral -= error * dt;
+        I = this.Ki * this.integral;
+        out = Math.max(this.minOut, Math.min(this.maxOut, P + I + D));
+      }
+    }
+    this.prevDerivative = derivative;
+    this.prevMeasurement = measurement;
+    return out;
+  }
+}
+
+class PhysicalPlant {
+  constructor(plantType="Thermal System"){ this.plantType=plantType; this.state=0; this.velocity=0; }
+  reset(initial=0){ this.state=initial; this.velocity=0; }
+  update(u, dt, disturbance=0){
+    if(this.plantType==="Thermal System"){
+      const tau=3.0, K=1.5, ambient=25;
+      const dstate = (-(this.state - ambient) + K*u + disturbance)/tau;
+      this.state += dstate * dt;
+    } else if(this.plantType==="DC Motor Speed"){
+      const J=0.01, b=0.1, K=0.01;
+      const d2 = (K*u - b*this.velocity + disturbance)/J;
+      this.velocity += d2 * dt;
+      this.state += this.velocity * dt;
+    } else if(this.plantType==="Liquid Tank Level"){
+      const area=2.0, vc=0.5;
+      const inflow = Math.max(0, u*0.1);
+      const outflow = vc * Math.sqrt(Math.max(0,this.state));
+      const dstate = (inflow - outflow + disturbance)/area;
+      this.state = Math.max(0, this.state + dstate*dt);
+    }
+    return this.state;
+  }
+}
+
+// ==========================================
+// UI + SIMULATION
+// ==========================================
+const els = {
+  plant: document.getElementById('plant'),
+  kp: document.getElementById('kp'),
+  ki: document.getElementById('ki'),
+  kd: document.getElementById('kd'),
+  kpVal: document.getElementById('kpVal'),
+  kiVal: document.getElementById('kiVal'),
+  kdVal: document.getElementById('kdVal'),
+  setpoint: document.getElementById('setpoint'),
+  disturbance: document.getElementById('disturbance'),
+  distVal: document.getElementById('distVal'),
+  simTime: document.getElementById('simTime'),
+  simTimeVal: document.getElementById('simTimeVal'),
+  plantCaption: document.getElementById('plantCaption'),
+  runBtn: document.getElementById('runBtn'),
+  exportBtn: document.getElementById('exportBtn'),
+  mPV: document.getElementById('mPV'),
+  mPVSub: document.getElementById('mPVSub'),
+  mIAE: document.getElementById('mIAE'),
+  mISE: document.getElementById('mISE'),
+  mStable: document.getElementById('mStable'),
+  mStableSub: document.getElementById('mStableSub'),
+  chartMeta: document.getElementById('chartMeta'),
+  statusBadge: document.getElementById('statusBadge'),
+};
+
+const PRESETS = {
+  conservative: {Kp:1.2, Ki:0.25, Kd:0.05},
+  balanced: {Kp:2.5, Ki:0.5, Kd:0.1},
+  aggressive: {Kp:6.0, Ki:1.5, Kd:0.8},
+  zn: {Kp:8.5, Ki:2.2, Kd:1.0},
+};
+
+function applyGains(o){
+  els.kp.value=o.Kp; els.ki.value=o.Ki; els.kd.value=o.Kd;
+  updateRangeLabels();
+}
+
+function updateRangeLabels(){
+  els.kpVal.textContent = parseFloat(els.kp.value).toFixed(2)+' gain';
+  els.kiVal.textContent = parseFloat(els.ki.value).toFixed(2)+' gain';
+  els.kdVal.textContent = parseFloat(els.kd.value).toFixed(2)+' gain';
+  els.distVal.textContent = parseFloat(els.disturbance.value).toFixed(1);
+  els.simTimeVal.textContent = els.simTime.value;
+  els.plantCaption.textContent = els.plant.value;
+  if(els.plant.value==="Thermal System" && document.activeElement!==els.setpoint){
+    // keep thermal default hint but don't override user-typed value aggressively
+  }
+}
+
+els.kp.addEventListener('input', updateRangeLabels);
+els.ki.addEventListener('input', updateRangeLabels);
+els.kd.addEventListener('input', updateRangeLabels);
+els.disturbance.addEventListener('input', updateRangeLabels);
+els.simTime.addEventListener('input', updateRangeLabels);
+els.plant.addEventListener('change', ()=>{
+  updateRangeLabels();
+  if(els.plant.value==="Thermal System") els.setpoint.value = 80;
+  else els.setpoint.value = 50;
+});
+
+// Segmented presets
+document.querySelectorAll('[data-preset]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const p = PRESETS[btn.dataset.preset];
+    if(p) applyGains(p);
+  });
+});
+document.getElementById('applyPresetBtn').addEventListener('click', ()=>{
+  // balanced as "Apply Preset Gains" default (mirrors Streamlit chosen)
+  applyGains(PRESETS.balanced);
+});
+document.querySelectorAll('[data-sp]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ els.setpoint.value = btn.dataset.sp; });
+});
+
+let lastTelemetry = null;
+
+function runSimulation(){
+  const plantChoice = els.plant.value;
+  const Kp = parseFloat(els.kp.value);
+  const Ki = parseFloat(els.ki.value);
+  const Kd = parseFloat(els.kd.value);
+  const setpoint = parseFloat(els.setpoint.value);
+  const disturbance = parseFloat(els.disturbance.value);
+  const simTime = parseFloat(els.simTime.value);
+  const dt = 0.05;
+  const steps = Math.floor(simTime/dt);
+
+  const pid = new IndustrialPID(Kp, Ki, Kd, [-100,100], true, 0.1);
+  const plant = new PhysicalPlant(plantChoice);
+  plant.reset(plantChoice==="Thermal System"?25:0);
+
+  const time=[], pv=[], sp=[], op=[], err=[];
+  for(let i=0;i<steps;i++){
+    const t = i*dt;
+    const curPV = plant.state;
+    const u = pid.compute(setpoint, curPV, dt);
+    plant.update(u, dt, disturbance);
+    time.push(t); pv.push(curPV); sp.push(setpoint); op.push(u); err.push(setpoint - curPV);
+  }
+
+  // Metrics
+  let iae=0, ise=0;
+  for(let i=0;i<err.length;i++){ iae += Math.abs(err[i])*dt; ise += err[i]*err[i]*dt; }
+  const tail = err.slice(-100);
+  const meanTail = tail.reduce((a,b)=>Math.abs(a)+Math.abs(b),0)/tail.length;
+  const isStable = setpoint===0 ? true : (meanTail < 0.02*Math.abs(setpoint));
+
+  // Metrics UI
+  els.mPV.textContent = pv[pv.length-1].toFixed(2);
+  els.mPVSub.textContent = `PV @ t=${simTime}s`;
+  els.mIAE.textContent = iae.toFixed(2);
+  els.mISE.textContent = ise.toFixed(2);
+  els.mStable.textContent = isStable ? "STABLE ✅" : "UNSTABLE ⚠️";
+  els.mStableSub.textContent = isStable ? "within 2% band" : "oscillating/diverging";
+  els.mStable.style.color = isStable ? "#00E676" : "#FF5252";
+  els.chartMeta.textContent = `Kp ${Kp} • Ki ${Ki} • Kd ${Kd} • SP ${setpoint} • ${steps} steps`;
+  els.statusBadge.textContent = isStable ? "● STABLE" : "● UNSTABLE";
+  els.statusBadge.style.color = isStable ? "#00E676" : "#FF5252";
+  els.statusBadge.style.borderColor = isStable ? "rgba(0,230,118,0.32)" : "rgba(255,82,82,0.32)";
+  els.exportBtn.disabled = false;
+
+  lastTelemetry = {time, pv, sp, op, err, setpoint};
+
+  // Plotly — PV vs SP
+  const layoutPV = {
+    paper_bgcolor:"#12131C", plot_bgcolor:"#12131C",
+    font:{family:"JetBrains Mono", color:"#8A9099", size:10},
+    margin:{l:40,r:16,t:12,b:28},
+    legend:{orientation:"h", x:0, y:1.08, font:{color:"#E6E8EB", size:10}},
+    xaxis:{title:"Time (s)", gridcolor:"rgba(255,255,255,0.06)", zeroline:false, color:"#6B7280"},
+    yaxis:{title:"Process Value", gridcolor:"rgba(255,255,255,0.06)", zeroline:false, color:"#6B7280"},
+  };
+  Plotly.newPlot("chartPV", [
+    {x:time, y:sp, name:"Setpoint", line:{color:"#FFD700", dash:"dash", width:1.5}, hovertemplate:"SP %{y:.1f}<extra></extra>"},
+    {x:time, y:pv, name:"Process Value", line:{color:"#00E676", width:2}, hovertemplate:"PV %{y:.2f}<extra></extra>"}
+  ], layoutPV, {displayModeBar:false, responsive:true});
+
+  const layoutU = {
+    paper_bgcolor:"#12131C", plot_bgcolor:"#12131C",
+    font:{family:"JetBrains Mono", color:"#8A9099", size:10},
+    margin:{l:40,r:16,t:12,b:28},
+    legend:{orientation:"h", x:0, y:1.08, font:{color:"#E6E8EB", size:10}},
+    xaxis:{title:"Time (s)", gridcolor:"rgba(255,255,255,0.06)", zeroline:false, color:"#6B7280"},
+    yaxis:{title:"Control U (%)", gridcolor:"rgba(255,255,255,0.06)", zeroline:false, color:"#6B7280"},
+  };
+  Plotly.newPlot("chartU", [
+    {x:time, y:op, name:"Control Signal (U)", line:{color:"#00B0FF", width:1.6}, fill:"tozeroy", fillcolor:"rgba(0,176,255,0.10)", hovertemplate:"U %{y:.1f}<extra></extra>"}
+  ], layoutU, {displayModeBar:false, responsive:true});
+}
+
+els.runBtn.addEventListener('click', runSimulation);
+
+// Export CSV
+els.exportBtn.addEventListener('click', ()=>{
+  if(!lastTelemetry) return;
+  const {time,pv,sp,op,err} = lastTelemetry;
+  let csv="Timestamp_s,Setpoint,ProcessValue,ControlOutput,Error\n";
+  for(let i=0;i<time.length;i++){
+    csv += `${time[i].toFixed(3)},${sp[i].toFixed(3)},${pv[i].toFixed(3)},${op[i].toFixed(3)},${err[i].toFixed(3)}\n`;
+  }
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download="pid_telemetry_data.csv"; a.click(); URL.revokeObjectURL(url);
+});
+
+// Init
+updateRangeLabels();
+// Auto-run once for preview
+setTimeout(runSimulation, 300);
+</script>
+</body>
+</html>
