@@ -4,6 +4,11 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+def apply_preset_gains(kp_val, ki_val, kd_val):
+    st.session_state["kp_slider"] = float(kp_val)
+    st.session_state["ki_slider"] = float(ki_val)
+    st.session_state["kd_slider"] = float(kd_val)
+
 # ==========================================
 # PAGE CONFIGURATION & CYBERPUNK SCADA STYLING
 # ==========================================
@@ -19,6 +24,45 @@ st.markdown(
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700;800&display=swap');
 
+    /* CRITICAL FIX: OLED OVERRIDE — Hide white boxes on inputs/sliders/buttons */
+    [data-testid="stNumberInput"] input {
+        background: #12131C !important;
+        border: 1px solid #00E676 !important;
+        color: #00E676 !important;
+    }
+    [data-testid="stSlider"] {
+        background: #12131C !important;
+        border: 1px solid #00E676 !important;
+        color: #00E676 !important;
+        border-radius: 12px !important;
+        padding: 10px 12px !important;
+    }
+    [data-testid="stSlider"] label {
+        color: #00E676 !important;
+    }
+    /* White wrapper hide */
+    div[data-baseweb="input"],
+    div[data-baseweb="slider"],
+    div[data-baseweb="base-input"] {
+        background: #12131C !important;
+    }
+    [data-testid="stNumberInput"] > div:first-child,
+    [data-testid="stSlider"] > div:first-child {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+    .stButton > button {
+        background: #12131C !important;
+        border: 1px solid #00E676 !important;
+        color: #00E676 !important;
+    }
+    .stButton > button:hover {
+        background: rgba(0,230,118,0.12) !important;
+        border: 1px solid #00E676 !important;
+        color: #00E676 !important;
+        box-shadow: 0 0 14px rgba(0,230,118,0.25) !important;
+    }
+
     /* Global OLED */
     .stApp { background: #0A0A0A; }
     [data-testid="stAppViewContainer"] { background: #0A0A0A; }
@@ -29,7 +73,7 @@ st.markdown(
     h1, h2, h3 { font-family: 'Inter', sans-serif !important; letter-spacing: -0.03em; }
     p, label, span { font-family: 'Inter', sans-serif; }
 
-    /* SCADA Card Wrapper — targets Streamlit bordered containers */
+    /* SCADA Card Wrapper — Cyberpunk OLED */
     [data-testid="stVerticalBlockBorderWrapper"] {
         background: rgba(20,20,22,0.85) !important;
         border: 1px solid rgba(0,229,255,0.14) !important;
@@ -90,32 +134,21 @@ st.markdown(
         font-weight: 700;
     }
 
-    /* Sidebar selectbox / inputs — sleek */
-    [data-testid="stSidebar"] [data-baseweb="select"] > div,
-    [data-testid="stSidebar"] [data-testid="stNumberInput"] input,
-    [data-testid="stSidebar"] [data-testid="stTextInput"] input {
-        background: #0A0A0A !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+    /* Sidebar selectbox — sleek */
+    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+        background: #12131C !important;
+        border: 1px solid #00E676 !important;
         border-radius: 10px !important;
-        color: #E6E8EB !important;
+        color: #00E676 !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 13px !important;
     }
-    [data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within,
-    [data-testid="stSidebar"] [data-testid="stNumberInput"] input:focus {
-        border-color: rgba(0,229,255,0.35) !important;
-        box-shadow: 0 0 0 3px rgba(0,229,255,0.10) !important;
+    [data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
+        border-color: #00E676 !important;
+        box-shadow: 0 0 0 3px rgba(0,230,118,0.14) !important;
     }
 
-    /* Sliders — neon track & thumb */
-    [data-testid="stSlider"] { padding: 6px 2px 4px 2px; }
-    [data-testid="stSlider"] label { 
-        font-family: 'Inter', sans-serif !important;
-        font-size: 12px !important;
-        color: #C7CAD1 !important;
-        font-weight: 500;
-        letter-spacing: -0.01em;
-    }
+    /* Sliders — neon track & thumb (OLED) */
     [data-testid="stSlider"] div[data-baseweb="slider"] > div:first-child {
         background: rgba(255,255,255,0.08) !important;
         height: 4px !important;
@@ -133,7 +166,7 @@ st.markdown(
         height: 18px !important;
     }
 
-    /* Segmented control row — pill buttons */
+    /* Segmented control row — pill buttons (Cyberpunk) */
     [data-testid="stSidebar"] .stButton > button {
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 11px !important;
@@ -142,33 +175,17 @@ st.markdown(
         border-radius: 999px !important;
         padding: 7px 10px !important;
         transition: all 0.15s ease !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
-        background: rgba(255,255,255,0.04) !important;
-        color: #9AA0A6 !important;
-        backdrop-filter: blur(6px);
     }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        border-color: rgba(0,229,255,0.28) !important;
-        color: #E6E8EB !important;
-        background: rgba(0,229,255,0.08) !important;
-        box-shadow: 0 0 14px rgba(0,229,255,0.12);
-        transform: translateY(-1px);
-    }
-    [data-testid="stSidebar"] .stButton > button:active {
-        transform: translateY(0px) scale(0.98);
-    }
-    /* Primary Apply Gains — cyan solid */
-    [data-testid="stSidebar"] div[data-testid="stVerticalBlockBorderWrapper"] + div .stButton > button,
     [data-testid="stSidebar"] .stButton > button[kind="primary"] {
-        background: #00E5FF !important;
+        background: #00E676 !important;
         color: #001114 !important;
-        border-color: transparent !important;
-        box-shadow: 0 6px 20px rgba(0,229,255,0.30) !important;
+        border: 1px solid #00E676 !important;
+        box-shadow: 0 6px 20px rgba(0,230,118,0.30) !important;
         font-weight: 700 !important;
     }
     [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
-        background: #00D4EA !important;
-        box-shadow: 0 8px 24px rgba(0,229,255,0.40) !important;
+        background: #00D87A !important;
+        box-shadow: 0 8px 24px rgba(0,230,118,0.40) !important;
     }
 
     /* Main CTA Execute button — neon */
@@ -188,16 +205,16 @@ st.markdown(
         box-shadow: 0 12px 36px rgba(0,229,255,0.45) !important;
     }
 
-    /* Metrics */
+    /* Metrics — OLED cards */
     [data-testid="stMetric"] {
-        background: rgba(20,20,20,0.9) !important;
-        border: 1px solid rgba(255,255,255,0.06) !important;
+        background: #12131C !important;
+        border: 1px solid #00E676 !important;
         border-radius: 14px !important;
         padding: 14px 16px !important;
         backdrop-filter: blur(8px);
     }
-    [data-testid="stMetricLabel"] { font-family: 'JetBrains Mono', monospace !important; font-size: 10px !important; letter-spacing: 0.10em !important; color: #80868E !important; }
-    [data-testid="stMetricValue"] { font-family: 'JetBrains Mono', monospace !important; color: #00E5FF !important; }
+    [data-testid="stMetricLabel"] { font-family: 'JetBrains Mono', monospace !important; font-size: 10px !important; letter-spacing: 0.10em !important; color: #00E676 !important; }
+    [data-testid="stMetricValue"] { font-family: 'JetBrains Mono', monospace !important; color: #00E676 !important; }
 
     /* Divider */
     hr { border-color: rgba(255,255,255,0.06) !important; margin: 14px 0 !important; }
@@ -325,33 +342,23 @@ with st.sidebar.container(border=True):
     st.caption("Select plant dynamics for Digital Twin")
 
 # ── Session State Initialization (BEFORE widgets) ──
-if "Kp" not in st.session_state:
-    st.session_state["Kp"] = 2.5
-if "Ki" not in st.session_state:
-    st.session_state["Ki"] = 0.5
-if "Kd" not in st.session_state:
-    st.session_state["Kd"] = 0.1
+if "kp_slider" not in st.session_state:
+    st.session_state["kp_slider"] = 2.5
+if "ki_slider" not in st.session_state:
+    st.session_state["ki_slider"] = 0.5
+if "kd_slider" not in st.session_state:
+    st.session_state["kd_slider"] = 0.1
 if "Setpoint" not in st.session_state:
     st.session_state["Setpoint"] = 80.0
 
-# ── Callbacks — executed BEFORE slider instantiation ──
-def apply_gains_callback():
-    """Primary Apply — Ziegler-Nichols aggressive preset. Called via on_click BEFORE widget instantiation."""
-    st.session_state["Kp"] = 6.0
-    st.session_state["Ki"] = 1.5
-    st.session_state["Kd"] = 0.8
-
-# Alias for legacy reference (keeps previous name functional)
-def apply_gains_controller():
-    return apply_gains_callback()
-
-def set_preset(kp, ki, kd):
-    st.session_state["Kp"] = kp
-    st.session_state["Ki"] = ki
-    st.session_state["Kd"] = kd
-
-def set_setpoint(v):
-    st.session_state["Setpoint"] = float(v)
+# Preset definitions for Apply Preset Gains
+PRESETS = {
+    "conservative": {"Kp": 1.2, "Ki": 0.25, "Kd": 0.05},
+    "balanced": {"Kp": 2.5, "Ki": 0.5, "Kd": 0.1},
+    "aggressive": {"Kp": 6.0, "Ki": 1.5, "Kd": 0.8},
+    "zn": {"Kp": 8.5, "Ki": 2.2, "Kd": 1.0},
+}
+chosen = PRESETS["balanced"]
 
 # ── Rapid Gain Presets — Segmented Control ──
 with st.sidebar.container(border=True):
@@ -360,35 +367,38 @@ with st.sidebar.container(border=True):
         unsafe_allow_html=True,
     )
     c1, c2, c3, c4 = st.columns(4)
-    c1.button("CONS", help="Conservative: low overshoot", on_click=set_preset, args=(1.2, 0.25, 0.05), use_container_width=True)
-    c2.button("BAL", help="Balanced: factory default", on_click=set_preset, args=(2.5, 0.5, 0.1), use_container_width=True)
-    c3.button("AGGR", help="Aggressive: fast response", on_click=set_preset, args=(6.0, 1.5, 0.8), use_container_width=True)
-    c4.button("ZN", help="Ziegler-Nichols tuned", on_click=set_preset, args=(8.5, 2.2, 1.0), use_container_width=True)
+    c1.button("CONS", help="Conservative: low overshoot", on_click=apply_preset_gains, args=(1.2, 0.25, 0.05), use_container_width=True)
+    c2.button("BAL", help="Balanced: factory default", on_click=apply_preset_gains, args=(2.5, 0.5, 0.1), use_container_width=True)
+    c3.button("AGGR", help="Aggressive: fast response", on_click=apply_preset_gains, args=(6.0, 1.5, 0.8), use_container_width=True)
+    c4.button("ZN", help="Ziegler-Nichols tuned", on_click=apply_preset_gains, args=(8.5, 2.2, 1.0), use_container_width=True)
 
-    st.button("Apply Gains Controller", on_click=apply_gains_callback, use_container_width=True, type="primary")
+    st.sidebar.button("Apply Preset Gains", on_click=apply_preset_gains, args=(chosen["Kp"], chosen["Ki"], chosen["Kd"]))
 
 # ── Kp — SCADA Card ──
 with st.sidebar.container(border=True):
     st.markdown('<div class="scada-label">▸ KP — PROPORTIONAL GAIN</div>', unsafe_allow_html=True)
-    Kp = st.slider("Kp (Proportional)", 0.0, 20.0, key="Kp", label_visibility="collapsed", step=0.1)
+    Kp = st.slider("Kp (Proportional)", 0.0, 20.0, key="kp_slider", label_visibility="collapsed", step=0.1)
     st.markdown(f'<div class="scada-value"><span>{Kp:.2f} gain</span></div>', unsafe_allow_html=True)
 
 # ── Ki — SCADA Card ──
 with st.sidebar.container(border=True):
     st.markdown('<div class="scada-label">▸ KI — INTEGRAL GAIN</div>', unsafe_allow_html=True)
-    Ki = st.slider("Ki (Integral)", 0.0, 10.0, key="Ki", label_visibility="collapsed", step=0.05)
+    Ki = st.slider("Ki (Integral)", 0.0, 10.0, key="ki_slider", label_visibility="collapsed", step=0.05)
     st.markdown(f'<div class="scada-value"><span>{Ki:.2f} gain</span></div>', unsafe_allow_html=True)
 
 # ── Kd — SCADA Card ──
 with st.sidebar.container(border=True):
     st.markdown('<div class="scada-label">▸ KD — DERIVATIVE GAIN</div>', unsafe_allow_html=True)
-    Kd = st.slider("Kd (Derivative)", 0.0, 5.0, key="Kd", label_visibility="collapsed", step=0.01)
+    Kd = st.slider("Kd (Derivative)", 0.0, 5.0, key="kd_slider", label_visibility="collapsed", step=0.01)
     st.markdown(f'<div class="scada-value"><span>{Kd:.2f} gain</span></div>', unsafe_allow_html=True)
 
 # ── Setpoint — SCADA Card with Segmented Presets ──
 with st.sidebar.container(border=True):
     st.markdown('<div class="scada-label">🎯 SETPOINT — TARGET VALUE</div>', unsafe_allow_html=True)
-    # Segmented setpoint presets
+
+    def set_setpoint(v):
+        st.session_state["Setpoint"] = float(v)
+
     s1, s2, s3, s4 = st.columns(4)
     s1.button("40", on_click=set_setpoint, args=(40.0,), use_container_width=True, key="sp40")
     s2.button("60", on_click=set_setpoint, args=(60.0,), use_container_width=True, key="sp60")
