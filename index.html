@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industrial & Systems Engineer — Portfolio | SCADA • Digital Twin • DevOps</title>
-    <meta name="description" content="Industrial & Systems Engineer specializing in SCADA, Digital Twins, Python, Docker & DevOps. Creator of NEXUS v5.0, Nemvai Secure Hub, and Server Status Monitor.">
+    <meta name="description" content="Industrial & Systems Engineer specializing in SCADA, Digital Twins, Python, Docker & DevOps. Creator of NEXUS v5.0, HydroSync, Nemvai Secure Hub, and Server Status Monitor.">
     <meta name="theme-color" content="#0A0A0A">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,7 +154,7 @@
                         <span class="pill">Cloud Security</span>
                     </div>
                     <div class="about-stats">
-                        <div class="a-stat"><span class="num">3</span><span class="mono label">Flagship<br>Platforms</span></div>
+                        <div class="a-stat"><span class="num">4</span><span class="mono label">Flagship<br>Platforms</span></div>
                         <div class="a-stat"><span class="num">500+</span><span class="mono label">Industrial<br>Tags Monitored</span></div>
                         <div class="a-stat"><span class="num">99.9%</span><span class="mono label">Target<br>Uptime SLA</span></div>
                     </div>
@@ -180,7 +180,7 @@
                         <div class="skill-group">
                             <h4 class="mono"><span class="accent">›</span> SCADA / OT / IoT</h4>
                             <div class="tags">
-                                <span class="tag cyan">SCADA</span><span class="tag cyan">Modbus TCP</span><span class="tag cyan">MQTT</span><span class="tag cyan">Digital Twin</span><span class="tag cyan">PID Control</span><span class="tag cyan">Ziegler-Nichols</span><span class="tag cyan">Row-Level Security</span>
+                                <span class="tag cyan">SCADA</span><span class="tag cyan">Modbus TCP</span><span class="tag cyan">MQTT</span><span class="tag cyan">Digital Twin</span><span class="tag cyan">PID Control</span><span class="tag cyan">Ziegler-Nichols</span><span class="tag cyan">Web Serial</span>
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
             <div class="section-head">
                 <span class="mono section-kicker"><span class="accent">02 —</span> Flagship Projects</span>
                 <h2 class="section-title">Production systems,<br>not demos.</h2>
-                <p class="section-desc">Three production-grade platforms spanning Industrial SCADA, Secure Cloud Productivity, and Real-Time Infrastructure Monitoring — containerized, secured, and observable.</p>
+                <p class="section-desc">Four production-grade platforms spanning Industrial SCADA, Digital Twins, Secure Cloud Productivity, and Real-Time Infrastructure Monitoring — containerized, secured, and observable.</p>
             </div>
 
             <div class="projects-grid">
@@ -281,7 +281,87 @@
                     <div class="card-glow"></div>
                 </article>
 
-                <!-- 2. Nemvai Productivity Hub -->
+                <!-- 2. HydroSync Smart Irrigation Digital Twin -->
+                <article class="project-card featured">
+                    <div class="project-top">
+                        <div class="project-badge mono">
+                            <span class="pulse small"></span> DIGITAL TWIN • v1.2 • LIVE
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/AlilouTopG/HydroSync" target="_blank" class="icon-link" aria-label="GitHub Repository">↗ Repository</a>
+                            <a href="https://hydrosync-0khc.onrender.com/#telemetry" target="_blank" class="icon-link" aria-label="Live Demo">↗ Live Demo</a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-header">
+                            <h3 class="project-title">HydroSync Enterprise OS</h3>
+                            <p class="mono project-subtitle">Smart Irrigation & Water Management Digital Twin</p>
+                        </div>
+                        <p class="project-desc">
+                            A precision agriculture and water management operating console featuring closed-loop PID regulation, dynamic environmental disturbance injection (Severe Drought, Heavy Rain), live Open-Meteo satellite weather synchronization, and Web Serial USB hardware ingestion.
+                        </p>
+
+                        <div class="arch-block">
+                            <h4 class="mono">Architecture Overview</h4>
+                            <div class="arch-diagram mono">
+                                <span class="arch-node">Sensors / USB<br><small>Web Serial API</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Weather API<br><small>Open-Meteo ET₀</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node accent-border">PID Simulator<br><small>Anti-Windup Engine</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">SCADA UI<br><small>Live Tank & Soil</small></span>
+                            </div>
+                        </div>
+
+                        <div class="highlights">
+                            <h4 class="mono">Technical Highlights</h4>
+                            <ul class="highlight-grid">
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Closed-Loop PID Regulation</strong>
+                                        <span>Discrete PID controller maintaining target soil moisture by modulating PWM valve/pump outputs with Anti-Windup safeguards.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Disturbance Injection Engine</strong>
+                                        <span>Real-time environmental anomaly simulation (Severe Drought, Heavy Rain, Emergency Shutoff) to evaluate system resilience.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Web Serial USB Hardware Integration</strong>
+                                        <span>Direct edge telemetry ingestion from physical microcontrollers (Arduino / ESP32) directly through the browser without extra drivers.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Satellite Weather Synchronization</strong>
+                                        <span>Live sync with Open-Meteo for real-time evapotranspiration (ET₀) calculations and dynamic rainfall adjustments.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="project-footer">
+                            <div class="tech mono">
+                                <span>Node.js</span><span>Express</span><span>JavaScript</span><span>Web Serial</span><span>Open-Meteo</span><span>PID Control</span><span>Render</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/AlilouTopG/HydroSync" target="_blank" class="btn btn-primary small">View Repository →</a>
+                                <a href="https://hydrosync-0khc.onrender.com/#telemetry" target="_blank" class="btn btn-ghost small">Live Demo →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <!-- 3. Nemvai Productivity Hub -->
                 <article class="project-card featured">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -361,7 +441,7 @@
                     <div class="card-glow"></div>
                 </article>
 
-                <!-- 3. Server Status Dashboard -->
+                <!-- 4. Server Status Dashboard -->
                 <article class="project-card">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -474,4 +554,41 @@
 
     <!-- Contact Section -->
     <section id="contact" class="section contact">
-        <div class="
+        <div class="container">
+            <div class="contact-card">
+                <div class="contact-left">
+                    <span class="mono section-kicker"><span class="accent">04 —</span> Contact</span>
+                    <h2>Let’s build<br>something resilient.</h2>
+                    <p>Open for Industrial IoT, SCADA modernization, and DevOps collaborations. Response time &lt; 24h.</p>
+                    <div class="contact-actions">
+                        <a href="mailto:benseffaalilou@gmail.com" class="btn btn-primary">benseffaalilou@gmail.com →</a>
+                        <a href="https://linkedin.com" target="_blank" class="btn btn-ghost">LinkedIn</a>
+                        <a href="https://github.com/AlilouTopG" target="_blank" class="btn btn-ghost">GitHub</a>
+                    </div>
+                </div>
+                <div class="contact-right">
+                    <form class="contact-form" onsubmit="return handleContact(event)">
+                        <div class="form-row">
+                            <label class="mono">Name <input type="text" placeholder="Ada Lovelace" required></label>
+                            <label class="mono">Email <input type="email" placeholder="ada@analytical.engine" required></label>
+                        </div>
+                        <label class="mono">Message <textarea rows="4" placeholder="Tell me about your plant, your stack, your problem..." required></textarea></label>
+                        <button type="submit" class="btn btn-primary full">Send Transmission — Encrypted ✓</button>
+                        <span class="mono form-note">Direct transmission — Encrypted & Logged</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner mono">
+            <span>© 2026 Ali Nasreddine Benseffa — Built with precision in #0A0A0A / #00E5FF</span>
+            <span>JetBrains Mono • Inter • OLED Cyberpunk • RBAC Secured</span>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
