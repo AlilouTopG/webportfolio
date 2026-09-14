@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industrial & Systems Engineer — Portfolio | SCADA • Digital Twin • DevOps</title>
-    <meta name="description" content="Industrial & Systems Engineer specializing in SCADA, Digital Twins, Python, Docker & DevOps. Creator of HydroSync, Nemvai Secure Hub, and Server Status Monitor.">
+    <meta name="description" content="Industrial & Systems Engineer specializing in SCADA, Digital Twins, Python, Docker & DevOps. Creator of APEX-SCADA, HydroSync, Nemvai Secure Hub, and Server Status Monitor.">
     <meta name="theme-color" content="#0A0A0A">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,7 @@
                 </h1>
                 <p class="hero-desc">
                     I architect <strong>hybrid SCADA, Digital Twin, and Cloud ecosystems</strong> that unify OT + IT.
-                    From real-time sensor telemetry and PID control loops to persistent PostgreSQL cloud security and automated fleet monitoring — production-grade, secure, observable.
+                    From 60 FPS Canvas oscilloscopes, Modbus TCP holding registers, and closed-loop PID tuning to persistent PostgreSQL security and fleet monitoring — production-grade, secure, observable.
                 </p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn btn-primary">
@@ -70,8 +70,8 @@
                 </div>
                 <div class="hero-meta">
                     <div class="meta-item">
-                        <span class="meta-value mono">1.2</span>
-                        <span class="meta-label mono">HYDROSYNC OS</span>
+                        <span class="meta-value mono">4.0</span>
+                        <span class="meta-label mono">SYSTEMS DEPLOYED</span>
                     </div>
                     <div class="meta-divider"></div>
                     <div class="meta-item">
@@ -80,8 +80,8 @@
                     </div>
                     <div class="meta-divider"></div>
                     <div class="meta-item">
-                        <span class="meta-value mono">RLS</span>
-                        <span class="meta-label mono">POSTGRES SECURE</span>
+                        <span class="meta-value mono">60 FPS</span>
+                        <span class="meta-label mono">EDGE TELEMETRY</span>
                     </div>
                 </div>
             </div>
@@ -89,34 +89,33 @@
                 <div class="terminal">
                     <div class="terminal-bar">
                         <div class="dots"><span></span><span></span><span></span></div>
-                        <span class="mono terminal-title">hydrosync_core :: prod — closed_loop_pid.py</span>
+                        <span class="mono terminal-title">apex_core :: edge — modbus_telemetry_stream.py</span>
                         <span class="mono terminal-status">● LIVE</span>
                     </div>
                     <div class="terminal-body">
-                        <pre class="code"><code><span class="c"># Closed-Loop PID Telemetry & Disturbance Sync</span>
-<span class="k">import</span> <span class="v">hydrosync</span> <span class="k">as</span> <span class="v">hs</span>
+                        <pre class="code"><code><span class="c"># APEX-SCADA Edge Telemetry & Modbus Stream</span>
+<span class="k">import</span> <span class="v">apex_scada</span> <span class="k">as</span> <span class="v">apex</span>
 
-<span class="v">serial_gateway</span> = <span class="v">hs</span>.<span class="f">WebSerial</span>(<span class="s">"/dev/ttyUSB0"</span>, <span class="v">baud</span>=115200)
-<span class="v">weather_feed</span> = <span class="v">hs</span>.<span class="f">OpenMeteo</span>(lat=36.19, lon=5.41)
+<span class="v">modbus</span> = <span class="v">apex</span>.<span class="f">ModbusClient</span>(<span class="s">"tcp://192.168.10.50:5020"</span>, <span class="v">slave</span>=1)
+<span class="v">twin</span> = <span class="v">apex</span>.<span class="f">DigitalTwin</span>(<span class="s">"fluid_tank_01"</span>, <span class="v">sample_rate</span>=16)
 
-<span class="k">with</span> <span class="v">hs</span>.<span class="f">DigitalTwin</span>(<span class="s">"zone-irrigation-01"</span>) <span class="k">as</span> <span class="v">twin</span>:
-    <span class="v">twin</span>.<span class="f">sync_weather</span>(<span class="v">weather_feed</span>.get_et0())
-    <span class="v">pid</span> = <span class="v">twin</span>.<span class="f">compute_pid</span>(target_moisture=65.0)
-    <span class="v">twin</span>.<span class="f">apply_pwm</span>(<span class="v">pid</span>.output, anti_windup=<span class="s">True</span>)
-    <span class="f">print</span>(<span class="s">f"✓ PID active: PWM={pid.output}% | Moisture steady"</span>)</code></pre>
+<span class="k">with</span> <span class="v">twin</span>.<span class="f">bind</span>(<span class="v">modbus</span>):
+    <span class="v">pid</span> = <span class="v">twin</span>.<span class="f">tune_pid</span>(kp=3.2, ki=1.5, kd=0.45, tau=0.8)
+    <span class="v">twin</span>.<span class="f">inject_shock</span>(magnitude=0.20, noise=<span class="s">"gaussian"</span>)
+    <span class="f">print</span>(<span class="s">f"✓ APEX Edge Online: 60FPS Telemetry | RTT: 2.4ms"</span>)</code></pre>
                         <div class="terminal-stats">
-                            <div class="stat"><span class="mono label">LATENCY</span><span class="mono val cyan">12ms</span><span class="bar"><i class="fill-88"></i></span></div>
-                            <div class="stat"><span class="mono label">THROUGHPUT</span><span class="mono val cyan">2.4k msg/s</span><span class="bar"><i class="fill-72"></i></span></div>
-                            <div class="stat"><span class="mono label">INTEGRITY</span><span class="mono val cyan">99.98%</span><span class="bar"><i class="fill-98"></i></span></div>
+                            <div class="stat"><span class="mono label">LATENCY</span><span class="mono val cyan">2.4ms</span><span class="bar"><i class="fill-88"></i></span></div>
+                            <div class="stat"><span class="mono label">FREQUENCY</span><span class="mono val cyan">60 FPS</span><span class="bar"><i class="fill-98"></i></span></div>
+                            <div class="stat"><span class="mono label">INTEGRITY</span><span class="mono val cyan">99.99%</span><span class="bar"><i class="fill-98"></i></span></div>
                         </div>
                     </div>
                     <div class="terminal-glow"></div>
                 </div>
                 <div class="float-badge badge-1">
-                    <span class="mono">WEB SERIAL</span><span class="dot"></span><span>USB Stream</span>
+                    <span class="mono">MODBUS TCP</span><span class="dot"></span><span>Port 5020</span>
                 </div>
                 <div class="float-badge badge-2">
-                    <span class="mono">OPEN-METEO</span><span class="dot"></span><span>Live Weather</span>
+                    <span class="mono">CANVAS 60FPS</span><span class="dot"></span><span>Real-Time</span>
                 </div>
             </div>
         </div>
@@ -150,10 +149,11 @@
                         <span class="pill">Control Theory</span>
                         <span class="pill">Industrial IoT</span>
                         <span class="pill">Digital Twins</span>
+                        <span class="pill">Modbus TCP</span>
                         <span class="pill">Cloud Security</span>
                     </div>
                     <div class="about-stats">
-                        <div class="a-stat"><span class="num">3</span><span class="mono label">Flagship<br>Platforms</span></div>
+                        <div class="a-stat"><span class="num">4</span><span class="mono label">Flagship<br>Platforms</span></div>
                         <div class="a-stat"><span class="num">500+</span><span class="mono label">Industrial<br>Tags Monitored</span></div>
                         <div class="a-stat"><span class="num">99.9%</span><span class="mono label">Target<br>Uptime SLA</span></div>
                     </div>
@@ -166,7 +166,7 @@
                             <div class="skill-bars">
                                 <div class="skill"><span>Python</span><span class="mono pct">95%</span><div class="track"><i class="fill-95"></i></div></div>
                                 <div class="skill"><span>Flask / FastAPI</span><span class="mono pct">90%</span><div class="track"><i class="fill-90"></i></div></div>
-                                <div class="skill"><span>JavaScript / Node.js</span><span class="mono pct">85%</span><div class="track"><i class="fill-85"></i></div></div>
+                                <div class="skill"><span>JavaScript / Node.js</span><span class="mono pct">88%</span><div class="track"><i class="fill-88"></i></div></div>
                                 <div class="skill"><span>SQL / PostgreSQL</span><span class="mono pct">90%</span><div class="track"><i class="fill-90"></i></div></div>
                             </div>
                         </div>
@@ -194,11 +194,91 @@
             <div class="section-head">
                 <span class="mono section-kicker"><span class="accent">02 —</span> Flagship Projects</span>
                 <h2 class="section-title">Production systems,<br>not demos.</h2>
-                <p class="section-desc">Three production-grade platforms spanning Digital Twins, Secure Cloud Productivity, and Real-Time Infrastructure Monitoring — containerized, secured, and observable.</p>
+                <p class="section-desc">Four production-grade platforms spanning Industrial SCADA, Digital Twins, Secure Cloud Productivity, and Real-Time Infrastructure Monitoring — containerized, secured, and observable.</p>
             </div>
 
             <div class="projects-grid">
-                <!-- 1. HydroSync Smart Irrigation Digital Twin -->
+                <!-- 1. APEX-SCADA Platform -->
+                <article class="project-card featured">
+                    <div class="project-top">
+                        <div class="project-badge mono">
+                            <span class="pulse small"></span> SCADA • v2.1 • LIVE EDGE OS
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/AlilouTopG/apex-scada-platform" target="_blank" class="icon-link" aria-label="GitHub Repository">↗ Repository</a>
+                            <a href="https://apex-scada-platform.vercel.app/" target="_blank" class="icon-link" aria-label="Live Demo">↗ Live Demo</a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-header">
+                            <h3 class="project-title">APEX-SCADA Platform</h3>
+                            <p class="mono project-subtitle">Next-Gen Edge Automation OS & Synoptic Digital Twin</p>
+                        </div>
+                        <p class="project-desc">
+                            A high-frequency web-based industrial SCADA console and synoptic Digital Twin engine. Engineered for edge automation, closed-loop PID calibration, 60 FPS HTML5 Canvas real-time oscilloscopes, stress shock injection, and a live Modbus TCP holding register packet sniffer.
+                        </p>
+
+                        <div class="arch-block">
+                            <h4 class="mono">Architecture Overview</h4>
+                            <div class="arch-diagram mono">
+                                <span class="arch-node">Process Tank<br><small>Fluid Dynamics</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">PID Engine<br><small>16ms Sample Rate</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node accent-border">Modbus TCP<br><small>FC03/FC06 Sniffer</small></span>
+                                <span class="arch-arrow">→</span>
+                                <span class="arch-node">Canvas UI<br><small>60 FPS Scope</small></span>
+                            </div>
+                        </div>
+
+                        <div class="highlights">
+                            <h4 class="mono">Technical Highlights</h4>
+                            <ul class="highlight-grid">
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Synoptic Digital Twin Dynamics</strong>
+                                        <span>Real-time 60 FPS fluid level tank equilibrium simulation tracking Feed-In (MV), Process Level (PV), and Error terms.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Precision PID Tuning Matrix</strong>
+                                        <span>Interactive calibration for Kp, Ki, Kd, and inertia Tau with 16ms discrete sampling and Anti-Windup dampening.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>Modbus TCP Sniffer & Registers</strong>
+                                        <span>Slave ID 1 holding register matrix (FC03 Read, FC06 Write) with raw-to-scaled counts and live hex frame inspection.</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="h-icon">◈</span>
+                                    <div>
+                                        <strong>60 FPS Multi-Channel Oscilloscope</strong>
+                                        <span>Hardware-accelerated HTML5 Canvas plotting Target (SP), Process (PV), and Actuator (MV) with Gaussian noise simulation.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="project-footer">
+                            <div class="tech mono">
+                                <span>JavaScript</span><span>HTML5 Canvas</span><span>SCADA</span><span>Modbus TCP</span><span>PID Control</span><span>Digital Twin</span><span>Vercel</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/AlilouTopG/apex-scada-platform" target="_blank" class="btn btn-primary small">View Repository →</a>
+                                <a href="https://apex-scada-platform.vercel.app/" target="_blank" class="btn btn-ghost small">Live Demo →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <!-- 2. HydroSync Smart Irrigation Digital Twin -->
                 <article class="project-card featured">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -278,7 +358,7 @@
                     <div class="card-glow"></div>
                 </article>
 
-                <!-- 2. Nemvai Productivity Hub -->
+                <!-- 3. Nemvai Productivity Hub -->
                 <article class="project-card featured">
                     <div class="project-top">
                         <div class="project-badge mono">
@@ -358,7 +438,7 @@
                     <div class="card-glow"></div>
                 </article>
 
-                <!-- 3. Server Status Dashboard -->
+                <!-- 4. Server Status Dashboard -->
                 <article class="project-card">
                     <div class="project-top">
                         <div class="project-badge mono">
